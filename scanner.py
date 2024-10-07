@@ -26,6 +26,24 @@ def check_bit(bit):
 def hex_to_ip(hex_value):
     return '.'.join(str(hex_to_decimal(hex_value[i:i+2])) for i in range(0, len(hex_value), 2))
 
+# Function to parse IPv4 options if IHL > 5
+def parse_ipv4_options(hex_data, header_length_bytes):
+    # Extract options bytes if they exist
+    if header_length_bytes > 20:
+        options_length = header_length_bytes - 20
+        options = hex_data[40:40 + options_length * 2]  # Each byte = 2 hex digits
+        print(f"IPv4 Options (Hex): {options}")
+    else:
+        print("No IPv4 Options Present")
+
+# Function to parse TCP options if Data Offset > 5
+def parse_tcp_options(hex_data, header_length_bytes):
+    if header_length_bytes > 20:
+        options_length = header_length_bytes - 20
+        options = hex_data[40:40 + options_length * 2]  # Each byte = 2 hex digits
+        print(f"TCP Options (Hex): {options}")
+    else:
+        print("No TCP Options Present")
 
 def parse_ethernet_header(hex_data):
     # Ethernet header is the first 14 bytes (28 hex characters)

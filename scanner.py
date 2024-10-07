@@ -1,3 +1,4 @@
+import argparse
 from scapy.all import sniff
 
 def parse_ethernet_header(hex_data):
@@ -14,6 +15,33 @@ def parse_ethernet_header(hex_data):
     print(f"Source MAC: {source_mac_readable}")
     print(f"EtherType: {ether_type}")
 
+    if ether_type == "0806": #ARP packet.
+        parse_arp_packet(hex_data[28:])
+    elif ether_type == "0800":  # IPv4 packet.
+        parse_ipv4_packet(hex_data[28:])
+    else:
+        print("Unsupported EtherType")
+
+# Placeholder function for parsing arp packet.
+def parse_arp_packet(hex_data):
+    print("Parsing ARP packet...")
+
+# Placeholder function for parsing ipv4 packet which will then have to check header. For TCP or UDP.
+def parse_ipv4_packet(hex_data):
+    print("Parsing IPv4 packet...")
+    protocol = hex_data[18:20]  # Check protocol type in IPv4 header
+    if protocol == "06":
+        parse_tcp_packet(hex_data[40:])
+    elif protocol == "11":
+        parse_udp_packet(hex_data[40:])
+
+#Placeholder function for parsing tcp packet.
+def parse_tcp_packet(hex_data):
+    print("Parsing TCP packet...")
+
+#Placeholder function for parsing udp packet.
+def parse_udp_packet(hex_data):
+    print("Parsing UDP packet...")
 
 # Function to handle each captured packet
 def packet_callback(packet):

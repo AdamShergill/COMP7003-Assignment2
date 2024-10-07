@@ -113,6 +113,8 @@ def parse_ipv4_packet(hex_data):
     source_ip = hex_data[24:32]  # Source IP Address (4 bytes)
     destination_ip = hex_data[32:40]  # Destination IP Address (4 bytes)
 
+    ihl = hex_to_decimal(version_ihl[1])  # Extract IHL (second hex digit)
+    header_length_bytes = ihl * 4  # IHL is in 32-bit words, so multiply by 4 to get bytes
     # Print out the IPv4 header fields
     print(f"Version/IHL (Hex): {version_ihl} -> Human Readable: {hex_to_decimal(version_ihl)}")
     print(f"TOS (Hex): {tos} -> Human Readable: {hex_to_decimal(tos)}")
@@ -132,6 +134,9 @@ def parse_ipv4_packet(hex_data):
     print(f"Checksum (Hex): {checksum} -> Human Readable: {hex_to_decimal(checksum)}")
     print(f"Source IP: {hex_to_ip(source_ip)}")
     print(f"Destination IP: {hex_to_ip(destination_ip)}")
+
+    # Parse IPv4 options if IHL > 5
+    parse_ipv4_options(hex_data, header_length_bytes)
 
     # Check for TCP or UDP and call the respective function
     protocol_value = hex_to_decimal(protocol)
@@ -158,6 +163,9 @@ def parse_tcp_packet(hex_data):
     checksum = hex_data[32:36]  # Checksum (2 bytes)
     urgent_pointer = hex_data[36:40]  # Urgent Pointer (2 bytes)
 
+    data_offset = hex_to_decimal(data_offset_flags[0]) * 4  # First four consecutive binary digits of data_offset_flags
+    header_length_bytes = data_offset
+
     # Convert and print fields
     print(f"Source Port (Hex): {source_port} -> Human Readable: {hex_to_decimal(source_port)}")
     print(f"Destination Port (Hex): {dest_port} -> Human Readable: {hex_to_decimal(dest_port)}")
@@ -178,6 +186,8 @@ def parse_tcp_packet(hex_data):
     print(f"Checksum (Hex): {checksum} -> Human Readable: {hex_to_decimal(checksum)}")
     print(f"Urgent Pointer (Hex): {urgent_pointer} -> Human Readable: {hex_to_decimal(urgent_pointer)}")
 
+    # Parse TCP options if Data Offset > 5
+    parse_tcp_options(hex_data, header_length_bytes)
 
 def parse_udp_packet(hex_data):
     print("Parsing UDP packet")

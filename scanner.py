@@ -10,6 +10,10 @@ def hex_to_binary(hex_value):
     binary_value = bin(int(hex_value, 16))[2:]  # Remove the "0b" prefix from binary
     return binary_value.zfill(8 * (len(hex_value) // 2))  # Ensure padding for full bytes
 
+def hex_to_ip(hex_value):
+    return '.'.join(str(hex_to_decimal(hex_value[i:i+2])) for i in range(0, len(hex_value), 2))
+
+
 def parse_ethernet_header(hex_data):
     # Ethernet header is the first 14 bytes (28 hex characters)
     dest_mac = hex_data[0:12]

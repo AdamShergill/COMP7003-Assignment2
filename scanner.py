@@ -52,14 +52,52 @@ def parse_ethernet_header(hex_data):
 def parse_arp_packet(hex_data):
     print("Parsing ARP packet...")
 
-# Placeholder function for parsing ipv4 packet which will then have to check header. For TCP or UDP.
 def parse_ipv4_packet(hex_data):
     print("Parsing IPv4 packet...")
-    protocol = hex_data[18:20]  # Check protocol type in IPv4 header
-    if protocol == "06":
-        parse_tcp_packet(hex_data[40:])
-    elif protocol == "11":
-        parse_udp_packet(hex_data[40:])
+
+    # Extract IPv4 header fields
+    version_ihl = hex_data[0:2]  # Version + IHL (1 byte)
+    tos = hex_data[2:4]  # Type of Service (1 byte)
+    total_length = hex_data[4:8]  # Total Length (2 bytes)
+    identification = hex_data[8:12]  # Identification (2 bytes)
+    flags_fragment_offset = hex_data[12:16]  # Flags + Fragment Offset (2 bytes)
+    ttl = hex_data[16:18]  # Time to Live (1 byte)
+    protocol = hex_data[18:20]  # Protocol (1 byte)
+    checksum = hex_data[20:24]  # Header Checksum (2 bytes)
+    source_ip = hex_data[24:32]  # Source IP Address (4 bytes)
+    destination_ip = hex_data[32:40]  # Destination IP Address (4 bytes)
+
+    # Print out the IPv4 header fields
+    print(f"Version/IHL (Hex): {version_ihl} -> Human Readable: {hex_to_decimal(version_ihl)}")
+    print(f"TOS (Hex): {tos} -> Human Readable: {hex_to_decimal(tos)}")
+    print(f"Total Length (Hex): {total_length} -> Human Readable: {hex_to_decimal(total_length)}")
+    print(f"Identification (Hex): {identification} -> Human Readable: {hex_to_decimal(identification)}")
+
+    # Extract and print flags
+    flags_binary = hex_to_binary_with_spaces(flags_fragment_offset)
+    three_flag_bits = get_first_three_bits(flags_binary)
+    print(f"Flags + Fragment Offset (Hex): {flags_fragment_offset} -> {flags_binary}")
+    print(f"    - Reserved: {check_bit(three_flag_bits[0])}")
+    print(f"    - Don't Fragment: {check_bit(three_flag_bits[1])}")
+    print(f"    - More Fragments: {check_bit(three_flag_bits[2])}")
+
+    print(f"TTL (Hex): {ttl} -> Human Readable: {hex_to_decimal(ttl)}")
+    print(f"Protocol (Hex): {protocol} -> Human Readable: {hex_to_decimal(protocol)}")
+    print(f"Checksum (Hex): {checksum} -> Human Readable: {hex_to_decimal(checksum)}")
+    print(f"Source IP: {hex_to_ip(source_ip)}")
+    print(f"Destination IP: {hex_to_ip(destination_ip)}")
+
+    # Check for TCP or UDP and call the respective function
+    protocol_value = hex_to_decimal(protocol)
+    if protocol_value == 6:  # TCP
+        print("This is a TCP packet.")
+        parse_tcp_packet(hex_data[40:])  # Pass the remaining packet to TCP parser
+    elif protocol_value == 17:  # UDP
+        print("This is a UDP packet.")
+        parse_udp_packet(hex_data[40:])  # Pass the remaining packet to UDP parser
+    else:
+        print(f"Unknown protocol: {protocol_value}")
+
 
 #Placeholder function for parsing tcp packet.
 def parse_tcp_packet(hex_data):

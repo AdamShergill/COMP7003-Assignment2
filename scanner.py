@@ -1,6 +1,15 @@
 import argparse
 from scapy.all import sniff
 
+# Helper function to convert hex to decimal
+def hex_to_decimal(hex_value):
+    return int(hex_value, 16)
+
+# Helper function to convert hex to binary
+def hex_to_binary(hex_value):
+    binary_value = bin(int(hex_value, 16))[2:]  # Remove the "0b" prefix from binary
+    return binary_value.zfill(8 * (len(hex_value) // 2))  # Ensure padding for full bytes
+
 def parse_ethernet_header(hex_data):
     # Ethernet header is the first 14 bytes (28 hex characters)
     dest_mac = hex_data[0:12]

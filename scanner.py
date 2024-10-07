@@ -48,9 +48,37 @@ def parse_ethernet_header(hex_data):
     else:
         print("Unsupported EtherType")
 
-# Placeholder function for parsing arp packet.
+
 def parse_arp_packet(hex_data):
     print("Parsing ARP packet...")
+
+    # ARP packet structure
+    hardware_type = hex_data[0:4]  # 2 bytes
+    protocol_type = hex_data[4:8]  # 2 bytes
+    hardware_size = hex_data[8:10]  # 1 byte
+    protocol_size = hex_data[10:12]  # 1 byte
+    opcode = hex_data[12:16]  # 2 bytes
+    sender_mac = hex_data[16:28]  # 6 bytes
+    sender_ip = hex_data[28:36]  # 4 bytes
+    target_mac = hex_data[36:48]  # 6 bytes
+    target_ip = hex_data[48:56]  # 4 bytes
+
+    # Convert and print fields
+    print(f"Hardware Type (Hex): {hardware_type} -> Human Readable: {hex_to_decimal(hardware_type)}")
+    print(f"Protocol Type (Hex): {protocol_type} -> Human Readable: {hex_to_decimal(protocol_type)}")
+    print(f"Hardware Size (Hex): {hardware_size} -> Human Readable: {hex_to_decimal(hardware_size)}")
+    print(f"Protocol Size (Hex): {protocol_size} -> Human Readable: {hex_to_decimal(protocol_size)}")
+    print(f"Opcode (Hex): {opcode} -> Human Readable: {hex_to_decimal(opcode)}")
+
+    # Print out MAC addresses in human-readable format
+    sender_mac_readable = ':'.join([sender_mac[i:i + 2] for i in range(0, 12, 2)])
+    target_mac_readable = ':'.join([target_mac[i:i + 2] for i in range(0, 12, 2)])
+
+    print(f"Sender MAC Address: {sender_mac_readable}")
+    print(f"Sender IP Address: {hex_to_ip(sender_ip)}")
+    print(f"Target MAC Address: {target_mac_readable}")
+    print(f"Target IP Address: {hex_to_ip(target_ip)}")
+
 
 def parse_ipv4_packet(hex_data):
     print("Parsing IPv4 packet...")

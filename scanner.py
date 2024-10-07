@@ -187,26 +187,28 @@ def packet_callback(packet):
     print(f"Captured Packet (Hex): {hex_data}")
     parse_ethernet_header(hex_data)
 
-    # Returning False to stop after processing the first packet
-    return False
 
 
-# Capture packets on a specified interface using a custom filter
-def capture_packets(interface, capture_filter=None):
+# Capture packets on a specified interface using a custom filter and count
+def capture_packets(interface, capture_filter=None, packet_count=1):
     print(f"Starting packet capture on {interface} with filter: {capture_filter if capture_filter else 'None'}")
 
-    # If no filter is provided, capture the first packet without any filter
-    sniff(iface=interface, filter=capture_filter if capture_filter else None, prn=packet_callback, count=1)
+    # Limit the count to a maximum of 10 packets
+    packet_count = min(packet_count, 10)
+
+    # Capture packets based on the provided count
+    sniff(iface=interface, filter=capture_filter if capture_filter else None, prn=packet_callback, count=packet_count)
 
 
-# Command-line argument parsing
+ #Command-line argument parsing
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Network packet sniffer")
     parser.add_argument('interface', help="Network interface to capture packets (e.g., eth0, wlo1)")
     parser.add_argument('--filter', help="BPF filter (e.g., arp, tcp port 80)")
+    parser.add_argument('--count', type=int, default=1, help="Number of packets to capture (maximum 10)")
 
     args = parser.parse_args()
 
-    # Capture packets based on interface and filter (if provided)
-    capture_packets(args.interface, args.filter)
+    # Capture packets based on interface, filter, and count
+    capture_packets(args.interface, args.filter, args.count)
 

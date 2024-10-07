@@ -133,9 +133,21 @@ def parse_tcp_packet(hex_data):
     print(f"Urgent Pointer (Hex): {urgent_pointer} -> Human Readable: {hex_to_decimal(urgent_pointer)}")
 
 
-#Placeholder function for parsing udp packet.
 def parse_udp_packet(hex_data):
-    print("Parsing UDP packet...")
+    print("Parsing UDP packet")
+
+    # Extract UDP fields
+    source_port = hex_data[0:4]  # Source Port (2 bytes)
+    dest_port = hex_data[4:8]  # Destination Port (2 bytes)
+    length = hex_data[8:12]  # Length (2 bytes)
+    checksum = hex_data[12:16]  # Checksum (2 bytes)
+
+    # Convert and print fields
+    print(f"Source Port (Hex): {source_port} -> Human Readable: {hex_to_decimal(source_port)}")
+    print(f"Destination Port (Hex): {dest_port} -> Human Readable: {hex_to_decimal(dest_port)}")
+    print(f"Length (Hex): {length} -> Human Readable: {hex_to_decimal(length)}")
+    print(f"Checksum (Hex): {checksum} -> Human Readable: {hex_to_decimal(checksum)}")
+
 
 ## Function to handle each captured packet
 def packet_callback(packet):

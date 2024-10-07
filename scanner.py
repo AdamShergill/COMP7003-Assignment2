@@ -10,6 +10,19 @@ def hex_to_binary(hex_value):
     binary_value = bin(int(hex_value, 16))[2:]  # Remove the "0b" prefix from binary
     return binary_value.zfill(8 * (len(hex_value) // 2))  # Ensure padding for full bytes
 
+# Convert hex to binary and add spaces for easier reading (for flags)
+def hex_to_binary_with_spaces(hex_value):
+    binary_value = hex_to_binary(hex_value)
+    return ' '.join([binary_value[i:i+4] for i in range(0, len(binary_value), 4)])
+
+# Extract first three bits of a binary string (used for flags)
+def get_first_three_bits(binary_value):
+    return binary_value[:3]
+
+# Check if a bit is set (1) or not (0)
+def check_bit(bit):
+    return "Set" if bit == '1' else "Not Set"
+
 def hex_to_ip(hex_value):
     return '.'.join(str(hex_to_decimal(hex_value[i:i+2])) for i in range(0, len(hex_value), 2))
 

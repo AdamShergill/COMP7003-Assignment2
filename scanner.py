@@ -99,9 +99,39 @@ def parse_ipv4_packet(hex_data):
         print(f"Unknown protocol: {protocol_value}")
 
 
-#Placeholder function for parsing tcp packet.
 def parse_tcp_packet(hex_data):
     print("Parsing TCP packet...")
+
+    # Extract TCP fields
+    source_port = hex_data[0:4]  # Source Port (2 bytes)
+    dest_port = hex_data[4:8]  # Destination Port (2 bytes)
+    seq_number = hex_data[8:16]  # Sequence Number (4 bytes)
+    ack_number = hex_data[16:24]  # Acknowledgment Number (4 bytes)
+    data_offset_flags = hex_data[24:28]  # Data Offset + Flags (2 bytes)
+    window_size = hex_data[28:32]  # Window Size (2 bytes)
+    checksum = hex_data[32:36]  # Checksum (2 bytes)
+    urgent_pointer = hex_data[36:40]  # Urgent Pointer (2 bytes)
+
+    # Convert and print fields
+    print(f"Source Port (Hex): {source_port} -> Human Readable: {hex_to_decimal(source_port)}")
+    print(f"Destination Port (Hex): {dest_port} -> Human Readable: {hex_to_decimal(dest_port)}")
+    print(f"Sequence Number (Hex): {seq_number} -> Human Readable: {hex_to_decimal(seq_number)}")
+    print(f"Acknowledgment Number (Hex): {ack_number} -> Human Readable: {hex_to_decimal(ack_number)}")
+
+    # Extract and print flags
+    flags_binary = hex_to_binary_with_spaces(data_offset_flags[2:4])  # Last byte contains the flags
+    print(f"Flags (Hex): {data_offset_flags[2:4]} -> Binary: {flags_binary}")
+    print(f"    - URG: {check_bit(flags_binary[5])}")
+    print(f"    - ACK: {check_bit(flags_binary[4])}")
+    print(f"    - PSH: {check_bit(flags_binary[3])}")
+    print(f"    - RST: {check_bit(flags_binary[2])}")
+    print(f"    - SYN: {check_bit(flags_binary[1])}")
+    print(f"    - FIN: {check_bit(flags_binary[0])}")
+
+    print(f"Window Size (Hex): {window_size} -> Human Readable: {hex_to_decimal(window_size)}")
+    print(f"Checksum (Hex): {checksum} -> Human Readable: {hex_to_decimal(checksum)}")
+    print(f"Urgent Pointer (Hex): {urgent_pointer} -> Human Readable: {hex_to_decimal(urgent_pointer)}")
+
 
 #Placeholder function for parsing udp packet.
 def parse_udp_packet(hex_data):

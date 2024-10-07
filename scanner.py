@@ -43,22 +43,36 @@ def parse_tcp_packet(hex_data):
 def parse_udp_packet(hex_data):
     print("Parsing UDP packet...")
 
-# Function to handle each captured packet
+## Function to handle each captured packet
 def packet_callback(packet):
     # Convert the raw packet to hex format
     raw_data = bytes(packet)
     hex_data = raw_data.hex()
-    
+
     # Process the Ethernet header
     print(f"Captured Packet (Hex): {hex_data}")
     parse_ethernet_header(hex_data)
 
+    # Returning False to stop after processing the first packet
+    return False
+
 
 # Capture packets on a specified interface using a custom filter
-def capture_packets(interface, capture_filter, packet_count):
-    print(f"Starting packet capture on {interface} with filter: {capture_filter}")
-    sniff(iface=interface, filter=capture_filter, prn=packet_callback, count=packet_count)
+def capture_packets(interface, capture_filter=None):
+    print(f"Starting packet capture on {interface} with filter: {capture_filter if capture_filter else 'None'}")
 
-# Example usage (replace with actual interface and filter)
-capture_packets('en0', 'tcp', 5)
+    # If no filter is provided, capture the first packet without any filter
+    sniff(iface=interface, filter=capture_filter if capture_filter else None, prn=packet_callback, count=1)
+
+
+# Command-line argument parsing
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Network packet sniffer")
+    parser.add_argument('interface', help="Network interface to capture packets (e.g., eth0, wlo1)")
+    parser.add_argument('--filter', help="BPF filter (e.g., arp, tcp port 80)")
+
+    args = parser.parse_args()
+
+    # Capture packets based on interface and filter (if provided)
+    capture_packets(args.interface, args.filter)
 
